@@ -29,7 +29,22 @@ var config = {
 		,startDate: theStartDate
 		,monthlyRate: theMothlyRate  
 	});
-
-
  });
  //---------------------------------------------------------
+database.ref().on("value", function(snapshot){
+
+	console.log(snapshot.val());
+	console.log(snapshot.val().name);
+	console.log(snapshot.val().role);
+	console.log(snapshot.val().startDate);
+	console.log(snapshot.val().monthlyRate);
+
+
+	/*$(".name1").append(snapshot.val().name);
+	$(".role1").append(snapshot.val().role);
+	$(".startDate1").append(snapshot.val().startDate);
+	$(".monthlyRate1").append(snapshot.val().mothlyRate);*/
+
+},function(errorObject){
+	console.log("Errors Handeled: " + errorObject.code);
+});
