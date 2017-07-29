@@ -13,6 +13,8 @@ var config = {
  var theRole = "";
  var theStartDate = "";
  var theMothlyRate = "";
+ var theMonthlyTotal = "";
+ var theMonthsWorked = "";
 //---------------------------------------------------------
  $("#submit").on("click", function(){
  	event.preventDefault();
@@ -31,19 +33,20 @@ var config = {
 	});
  });
  //---------------------------------------------------------
-database.ref().on("value", function(snapshot){
+database.ref().on("child_added", function(childSnapshot){
 
-	console.log(snapshot.val());
-	console.log(snapshot.val().name);
-	console.log(snapshot.val().role);
-	console.log(snapshot.val().startDate);
-	console.log(snapshot.val().monthlyRate);
+	console.log(childSnapshot.val());
+	console.log(childSnapshot.val().monthlyRate);
+	console.log(childSnapshot.val().name);
+	console.log(childSnapshot.val().role);
+	console.log(childSnapshot.val().startDate);
+	
 
 
-	/*$(".name1").append(snapshot.val().name);
-	$(".role1").append(snapshot.val().role);
-	$(".startDate1").append(snapshot.val().startDate);
-	$(".monthlyRate1").append(snapshot.val().mothlyRate);*/
+	$(".name1").html(childSnapshot.val().name);
+	$(".role1").html(childSnapshot.val().role);
+	$(".startDate1").html(childSnapshot.val().startDate);
+	$(".monthlyRate1").html(childSnapshot.val().mothlyRate);
 
 },function(errorObject){
 	console.log("Errors Handeled: " + errorObject.code);
