@@ -8,6 +8,7 @@
 //    Then use moment.js formatting to set difference in months.
 // 5. Calculate Total billed
 
+
 // 1. Initialize Firebase
   // Initialize Firebase
   var config = {
