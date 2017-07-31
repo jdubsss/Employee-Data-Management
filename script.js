@@ -1,53 +1,105 @@
-var config = {
-    apiKey: "AIzaSyC9BdhtymAv2f8nSwWD7Ex6-oRfxVZQiVg",
-    authDomain: "employe-data-managmet.firebaseapp.com",
-    databaseURL: "https://employe-data-managmet.firebaseio.com",
-    projectId: "employe-data-managmet",
+/* global firebase moment */
+// Steps to complete:
+
+// 1. Initialize Firebase
+// 2. Create button for adding new employees - then update the html + update the database
+// 3. Create a way to retrieve employees from the employee database.
+// 4. Create a way to calculate the months worked. Using difference between start and current time.
+//    Then use moment.js formatting to set difference in months.
+// 5. Calculate Total billed
+
+// 1. Initialize Firebase
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAuR3LaherF1ICay0gs_0uke4ugzp14W88",
+    authDomain: "employee-data-77972.firebaseapp.com",
+    databaseURL: "https://employee-data-77972.firebaseio.com",
+    projectId: "employee-data-77972",
     storageBucket: "",
-    messagingSenderId: "912645595720"
+    messagingSenderId: "344934848375"
   };
   firebase.initializeApp(config);
- var database =firebase.database();
 
- var theName = ""; 
- var theRole = "";
- var theStartDate = "";
- var theMothlyRate = "";
- var theMonthlyTotal = "";
- var theMonthsWorked = "";
-//---------------------------------------------------------
- $("#submit").on("click", function(){
- 	event.preventDefault();
- 	console.log("the button works");
- 	theName = $("#name").val().trim();
- 	theRole = $("#role").val().trim(); 
-	theStartDate = $("#startDate").val().trim();
-	theMothlyRate = $("#monthlyRate").val().trim();
-	console.log(theName);
+var database = firebase.database();
 
-	database.ref().push({
-		name: theName
-		,role: theRole
-		,startDate: theStartDate
-		,monthlyRate: theMothlyRate  
-	});
- });
- //---------------------------------------------------------
-database.ref().on("child_added", function(childSnapshot){
+// 2. Button for adding Employees
+$("#add-employee-btn").on("click", function (event) {
+	event.preventDefault();
+
+	// Grabs user input
+	var empName = $("#employee-name-input").val().trim();
+	var empRole = $("#role-input").val().trim();
+	var empStart = moment($("#start-input").val().trim(), "DD/MM/YY").format("X"); 
+/*	from the moment.js docs: 
+		X	1410715640.579	Unix timestamp
+		x	1410715640579	Unix ms timestamp*/
+	var empRate = $("#rate-input").val().trim();
+
+	// Creates local "temporary" object for holding employee data
+	var newEmp = {
+		name: empName,
+		role: empRole,
+		start: empStart,
+		rate: empRate
+	};
+
+	// Uploads employee data to the database
+	database.ref().push(newEmp);
+
+	// Logs everything to console
+	console.log(newEmp.name);
+	console.log(newEmp.role);
+	console.log(newEmp.start);
+	console.log(newEmp.rate);
+
+	// Alert
+	alert("Employee successfully added");
+
+	// Clears all of the text-boxes
+	$("#employee-name-input").val("");
+	$("#role-input").val("");
+	$("#start-input").val("");
+	$("#rate-input").val("");
+});
+
+// 3. Create Firebase event for adding employee to the database and a row in the html when a user adds an entry
+database.ref().on("child_added", function (childSnapshot, prevChildKey) {
 
 	console.log(childSnapshot.val());
-	console.log(childSnapshot.val().monthlyRate);
-	console.log(childSnapshot.val().name);
-	console.log(childSnapshot.val().role);
-	console.log(childSnapshot.val().startDate);
-	
 
+	// Store everything into a variable.
+	var empName = childSnapshot.val().name;
+	var empRole = childSnapshot.val().role;
+	var empStart = childSnapshot.val().start;
+	var empRate = childSnapshot.val().rate;
 
-	$(".name1").html(childSnapshot.val().name);
-	$(".role1").html(childSnapshot.val().role);
-	$(".startDate1").html(childSnapshot.val().startDate);
-	$(".monthlyRate1").html(childSnapshot.val().mothlyRate);
+	// Employee Info
+	console.log(empName);
+	console.log(empRole);
+	console.log(empStart);
+	console.log(empRate);
 
-},function(errorObject){
-	console.log("Errors Handeled: " + errorObject.code);
+	// Prettify the employee start
+	var empStartPretty = moment.unix(empStart).format("MM/DD/YY");
+
+	// Calculate the months worked using hardcore math
+	// To calculate the months worked
+	var empMonths = moment().diff(moment.unix(empStart, "X"), "months");
+	console.log(empMonths);
+
+	// Calculate the total billed rate
+	var empBilled = empMonths * empRate;
+	console.log(empBilled);
+
+	// Add each employees's data into the table
+	$("#employee-table > tbody").append("<tr><td>" + empName + "</td><td>" + empRole + "</td><td>" +
+		empStartPretty + "</td><td>" + empMonths + "</td><td>" + empRate + "</td><td>" + empBilled + "</td></tr>");
 });
+
+// Example Time Math
+// -----------------------------------------------------------------------------
+// Assume Employee start date of January 1, 2015
+// Assume current date is March 1, 2016
+
+// We know that this is 15 months.
+// Now we will create code in moment.js to confirm that any attempt we use mets this test case
