@@ -30,7 +30,7 @@ $("#add-employee-btn").on("click", function (event) {
 	// Grabs user input
 	var empName = $("#employee-name-input").val().trim();
 	var empRole = $("#role-input").val().trim();
-	var empStart = moment($("#start-input").val().trim(), "DD/MM/YY").format("X"); 
+	var empStart = moment($("#start-input").val().trim(), "MM/DD/YYYY").format("X"); 
 /*	from the moment.js docs: 
 		X	1410715640.579	Unix timestamp
 		x	1410715640579	Unix ms timestamp*/
@@ -81,7 +81,7 @@ database.ref().on("child_added", function (childSnapshot, prevChildKey) {
 	console.log(empRate);
 
 	// Prettify the employee start
-	var empStartPretty = moment.unix(empStart).format("MM/DD/YY");
+	var empStartPretty = moment.unix(empStart).format("MM/DD/YYYY");
 
 	// Calculate the months worked using hardcore math
 	// To calculate the months worked
